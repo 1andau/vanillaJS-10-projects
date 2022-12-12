@@ -18,7 +18,11 @@ async function getMovies(url) {
   const respData = await resp.json();
   showMovies(respData);
 
+
+
+
   function getClassByRate(vote) {
+
     if (vote >= 7) {
       return 'green';
     } else if (vote >= 5) {
