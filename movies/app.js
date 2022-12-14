@@ -1,11 +1,14 @@
-const API_KEY = '8c8e1a50-6322-4135-8875-5d40a5420d86';
+
+document.addEventListener("DOMContentLoaded", function () {
+    const API_KEY = '8c8e1a50-6322-4135-8875-5d40a5420d86';
 const API_URL_POPULAR =
   'https://kinopoiskapiunofficial.tech/api/v2.2/films/top?type=TOP_100_POPULAR_FILMS&page=1';
+  getMovies(API_URL_POPULAR);
 const API_URL_SEARCH =
   'https://kinopoiskapiunofficial.tech/api/v2.1/films/search-by-keyword?keyword=';
 const API_URL_MOVIE_DETAILS = 'https://kinopoiskapiunofficial.tech/api/v2.2/films/';
 
-getMovies(API_URL_POPULAR);
+
 
 async function getMovies(url) {
   const resp = await fetch(url, {
@@ -14,15 +17,36 @@ async function getMovies(url) {
       'Content-Type': 'application/json',
     },
   });
-
   const respData = await resp.json();
   showMovies(respData);
 
 
+  function getRandomItem(arr) {
+    // get random index value
+    const randomIndex = Math.floor(Math.random() * arr.length);
+    // get random item
+    const item = arr[randomIndex];
+    return item;
+  }t
+  const movieNames = [
+    "Человек Паук",
+    "Мстители",
+    "Гонка",
+    "Достучаться до небес",
+    "Зеленая миля",
+    "Области тьмы",
+    "Господин Никто",
+  ];
+  btn = document.querySelector(".random-movie");
+
+  btn.addEventListener("click", () => {
+    const randomUrl = API_URL_SEARCH + getRandomItem(movieNames);
+    getMovies(randomUrl);
+  });
+
 
 
   function getClassByRate(vote) {
-
     if (vote >= 7) {
       return 'green';
     } else if (vote >= 5) {
@@ -31,6 +55,8 @@ async function getMovies(url) {
       return 'red';
     }
   }
+
+
 
   function showMovies(data) {
     const moviesEl = document.querySelector('.movies');
@@ -52,13 +78,14 @@ async function getMovies(url) {
         <div class="movie__category">   </div>
         <div class="movie__average movie__average--${getClassByRate(movie.rating)}">${
         movie.rating
-      }</div>
+      }</div> 
 </div>
     `;
-      movieEl.addEventListener('click', () => openModal(movie.filmId));
 
+      movieEl.addEventListener('click', () => openModal(movie.filmId));
       moviesEl.appendChild(movieEl);
     });
+ 
   }
 }
 
@@ -66,11 +93,17 @@ const form = document.querySelector('form');
 const search = document.querySelector('.header__search');
 
 form.addEventListener('submit', (e) => {
-  //по умолчанию, чтобы не делать переходы на новые страницы
   e.preventDefault();
 
   //сюда search
   const apiSearhUrl = `${API_URL_SEARCH}${search.value}`;
+
+  if(apiSearhUrl.trim().length === 0){
+    moviesEl.innerHTML = '<p>error sorry</p>'; 
+    return; 
+  }
+
+
   if (search.value) {
     getMovies(apiSearhUrl);
 
@@ -135,4 +168,6 @@ window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     closeModal();
   }
-});
+})
+
+})
